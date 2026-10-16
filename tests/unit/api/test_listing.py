@@ -11,6 +11,8 @@ import pandas as pd
 import pytest
 
 from vietstock.api.listing import Listing
+from vietstock.core.registry import ProviderRegistry
+from vietstock.explorer.tcbs.listing import Listing as TCBListing
 
 
 @pytest.mark.unit
@@ -77,3 +79,12 @@ class TestListingAdapter:
         """Test Listing supports different sources."""
         listing = Listing(source=source, show_log=False)
         assert listing.source.lower() == source.lower()
+
+    def test_listing_tcbs_source_is_registered(self):
+        """Test TCBS is wired up as a Listing provider and exposes its own method."""
+        listing = Listing(source="TCBS", show_log=False)
+
+        assert listing.source.lower() == "tcbs"
+        assert ProviderRegistry.is_registered("listing", "tcbs")
+        assert isinstance(listing.provider, TCBListing)
+        assert callable(listing.research_reports)

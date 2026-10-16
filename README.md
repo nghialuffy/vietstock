@@ -12,7 +12,7 @@ chứng khoán Việt Nam.
 | --- | --- |
 | Giao diện Hợp nhất (Unified UI) | `Reference`, `Market`, `Fundamental`, `Retail`, `Broker` |
 | Lớp API adapter | `Quote`, `Listing`, `Company`, `Finance`, `Trading`, `Fund` |
-| Nguồn dữ liệu | VCI, KBS, MSN, FMarket, cùng nguồn giá vàng và tỷ giá |
+| Nguồn dữ liệu | VCI, KBS, MSN, TCBS, FMarket, cùng nguồn giá vàng và tỷ giá |
 | Connector | DNSE (giao dịch), FMP (chứng khoán quốc tế) |
 | Tiện ích lõi | chuẩn hoá trường dữ liệu, retry với exponential backoff, phát hiện CDN/WAF block, circuit breaker theo host |
 
@@ -60,6 +60,9 @@ df_profile = ref.company(symbol="FPT").info()
 
 # Báo cáo tài chính
 df_balance = fa.equity(symbol="TCB").balance_sheet(period="year")
+
+# Báo cáo phân tích (TCBS): ngày công bố, loại báo cáo, link PDF
+df_reports = ref.reports.list(page=1)  # all_pages=True để lấy hết
 ```
 
 Mỗi nhóm dữ liệu là một đối tượng gọi được, nhận `symbol` rồi trả về các phương thức
@@ -131,9 +134,11 @@ vietstock
 │   │   └── sectors() [KBS] -> DataFrame # List symbols grouped by industry.
 │   ├── market # Market status and metadata.
 │   │   └── status() [VCI] -> DataFrame # Get live market status.
-│   └── search # Search functionality.
-│       ├── symbol() [MSN] -> DataFrame # Search for symbols globally.
-│       └── info() [MSN] -> DataFrame # Search for detailed asset information.
+│   ├── search # Search functionality.
+│   │   ├── symbol() [MSN] -> DataFrame # Search for symbols globally.
+│   │   └── info() [MSN] -> DataFrame # Search for detailed asset information.
+│   └── reports # Research reports published by the data sources.
+│       └── list() [TCBS] -> DataFrame # TCBS research reports (report date + PDF link).
 ├── Market
 │   ├── quote() [KBS] -> DataFrame # Global in-session quote (source-delayed).
 │   ├── equity # Access equity market data.
@@ -199,6 +204,7 @@ vietstock
 | VCI | Lịch sử giá, khớp lệnh, báo cáo tài chính, hồ sơ doanh nghiệp |
 | KBS | Danh sách mã, chỉ số, hồ sơ doanh nghiệp, báo cáo tài chính |
 | MSN | Giá và danh sách mã theo `SecId` |
+| TCBS | Báo cáo phân tích (ngày công bố, loại báo cáo, link PDF) |
 | FMarket | Danh mục và hiệu suất quỹ mở |
 | SJC / tỷ giá | Giá vàng và tỷ giá ngoại tệ |
 

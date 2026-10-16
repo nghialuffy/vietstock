@@ -132,6 +132,7 @@ def show_api(node: Any = None, level: int = 0, _indent: str = "") -> None:
         "IndustryReference": "industry",
         "MarketReference": "market",
         "SearchReference": "search",
+        "ReportsReference": "reports",
         "EventReference": "events",
         "ForexReference": "forex",
         "Market": "Market",

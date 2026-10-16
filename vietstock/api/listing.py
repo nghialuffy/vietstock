@@ -20,6 +20,7 @@ class Listing(BaseAdapter):
       - all_government_bonds
       - all_covered_warrant
       - all_bonds
+      - research_reports
 
     Usage:
         lst = Listing(source="vci", random_agent=False, show_log=True)
@@ -28,6 +29,7 @@ class Listing(BaseAdapter):
         idx = lst.industries_icb()
         group = lst.symbols_by_group(group="VN30")
         fu = lst.all_future_indices()
+        reports = Listing(source="tcbs").research_reports(all_pages=True)
     """
 
     def __init__(
@@ -45,10 +47,10 @@ class Listing(BaseAdapter):
         self.random_agent = random_agent
         self.show_log = show_log
 
-        # Validate the source to only accept vci or msn
-        if source.lower() not in ["kbs", "vci", "msn"]:
+        # Validate the source to only accept the providers wired up for listing
+        if source.lower() not in ["kbs", "vci", "msn", "tcbs"]:
             raise ValueError(
-                "Lớp Listing chỉ nhận giá trị tham số source là 'KBS', 'VCI' hoặc 'MSN'.",
+                "Lớp Listing chỉ nhận giá trị tham số source là 'KBS', 'VCI', 'MSN' hoặc 'TCBS'.",
             )
 
         # BaseAdapter will discover vietstock.explorer.<real_source>.listing
@@ -122,6 +124,16 @@ class Listing(BaseAdapter):
         Retrieve the market-wide events calendar, e.g.
         ``events_calendar("DIV", "2026-10-16", "2026-12-16")``.
         Only ``source="vci"`` implements this.
+        """
+        pass
+
+    @api_retry
+    @dynamic_method
+    def research_reports(self, *args: Any, **kwargs: Any) -> Any:
+        """
+        Retrieve TCBS research reports (report date + PDF link, paged), e.g.
+        ``research_reports(page=3)`` or ``research_reports(all_pages=True)``.
+        Only ``source="tcbs"`` implements this.
         """
         pass
 

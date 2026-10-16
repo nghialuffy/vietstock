@@ -111,6 +111,7 @@ class DataSource(str, Enum):
 
     KBS = "kbs"
     VCI = "vci"
+    TCBS = "tcbs"
     MSN = "msn"
     DNSE = "dnse"
     BINANCE = "binance"

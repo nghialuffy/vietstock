@@ -75,7 +75,7 @@ def _ensure_explorer_modules_loaded():
     if _explorer_modules_loaded:
         return
     try:
-        from .explorer import kbs, msn, vci  # noqa: F401
+        from .explorer import kbs, msn, tcbs, vci  # noqa: F401
 
         _explorer_modules_loaded = True
     except Exception as e:
