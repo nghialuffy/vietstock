@@ -115,9 +115,14 @@ class Listing(BaseAdapter):
     #     )
     # )
 
+    @api_retry
     @dynamic_method
     def events_calendar(self, *args: Any, **kwargs: Any) -> Any:
-        """Retrieve events calendar (dividends, AGM, etc.)."""
+        """
+        Retrieve the market-wide events calendar, e.g.
+        ``events_calendar("DIV", "2026-10-16", "2026-12-16")``.
+        Only ``source="vci"`` implements this.
+        """
         pass
 
     @dynamic_method

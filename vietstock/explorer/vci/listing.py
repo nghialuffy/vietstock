@@ -3,6 +3,8 @@
 # Price chart, order-book depth chart, price-versus-volume chart and market behaviour statistics
 from __future__ import annotations
 
+from datetime import datetime, timedelta
+
 import pandas as pd
 
 from vietstock.core.utils.client import send_request
@@ -11,7 +13,7 @@ from vietstock.core.utils.parser import camel_to_snake
 from vietstock.core.utils.transform import drop_cols_by_pattern, reorder_cols
 from vietstock.core.utils.user_agent import get_headers
 
-from .const import _GROUP_CODE_MAPPING, _TRADING_URL, _VCI_INDEX_MAPPING
+from .const import _GROUP_CODE_MAPPING, _TRADING_URL, _VCI_EVENTS_URL, _VCI_INDEX_MAPPING
 
 logger = get_logger(__name__)
 
@@ -320,6 +322,74 @@ class Listing:
                 | df["organ_name"].astype(str).str.upper().str.contains(query)
             ]
         df.source = "VCI"
+        return df
+
+    def events_calendar(
+        self,
+        event_type: str | None = None,
+        start: str | None = None,
+        end: str | None = None,
+        size: int = 500,
+        show_log: bool | None = False,
+    ) -> pd.DataFrame:
+        """
+        Retrieve the market-wide corporate events calendar for a date range.
+
+        Unlike ``Company.events()``, which is bound to one ticker and only looks
+        backwards, this queries every listed company at once, so it answers
+        "which symbols go ex-dividend in the next two months?".
+
+        Args:
+            - event_type (optional): Comma-separated event codes, e.g. 'DIV'
+              dividends, 'ISS' share issuance, 'AGME,AGMR' shareholder meetings.
+              None returns every event type.
+            - start (optional): Start date, 'YYYY-MM-DD' or 'YYYYMMDD'.
+              Defaults to today.
+            - end (optional): End date, same formats as start.
+              Defaults to 30 days after today.
+            - size (optional): Records to fetch. Defaults to 500.
+            - show_log (optional): Show debug logs. Defaults to False.
+
+        Examples:
+            >>> df = Listing().events_calendar("DIV", "2026-10-16", "2026-12-16")
+            >>> df[["ticker", "exright_date", "value_per_share"]].head()
+        """
+        now = datetime.now()
+        params = {
+            "fromDate": start or now.strftime("%Y%m%d"),
+            "toDate": end or (now + timedelta(days=30)).strftime("%Y%m%d"),
+            "size": size,
+        }
+        if event_type:
+            params["eventCode"] = event_type
+
+        json_data = send_request(
+            url=_VCI_EVENTS_URL,
+            headers=self.headers,
+            method="GET",
+            params=params,
+            show_log=show_log,
+        )
+
+        records = ((json_data or {}).get("data") or {}).get("content") or []
+
+        if show_log:
+            logger.info(
+                f"Truy xuất thành công {len(records)} sự kiện doanh nghiệp "
+                f"(Successfully retrieved {len(records)} corporate events).",
+            )
+
+        df = pd.DataFrame(records)
+
+        if not df.empty:
+            df.columns = [camel_to_snake(col) for col in df.columns]
+            for col in [c for c in df.columns if "date" in c]:
+                df[col] = pd.to_datetime(df[col], errors="coerce").dt.strftime(
+                    "%Y-%m-%d",
+                )
+
+        df.source = "VCI"
+
         return df
 
 
