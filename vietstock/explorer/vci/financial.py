@@ -19,8 +19,6 @@ def _safe_infer_objects(df):
         return df.infer_objects()
 
 
-import requests  # noqa: E402
-
 from vietstock.core.utils import client  # noqa: E402
 from vietstock.core.utils.logger import get_logger  # noqa: E402
 from vietstock.core.utils.parser import get_asset_type  # noqa: E402
@@ -168,11 +166,9 @@ class Finance:
         """
         url = "https://trading.vietcap.com.vn/priceboard"
         try:
-            session = requests.Session()
-            session.headers.update(self.headers)
-            session.get(url, timeout=10)
+            client._SESSION.get(url, headers=self.headers, timeout=10)
             # Refresh the headers with the cookies handed out by the price board
-            self.headers.update(session.cookies.get_dict())
+            self.headers.update(client._SESSION.cookies.get_dict())
         except Exception as e:
             if self.show_log:
                 logger.warning(f"Handshake thất bại: {e}")

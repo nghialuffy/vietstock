@@ -6,8 +6,6 @@ CORE FIXTURES (for AI understanding):
 
 HTTP Mocking:
   - mock_response_factory: Create custom mock responses
-  - mock_http_get: Mock requests.get globally
-  - mock_http_post: Mock requests.post globally
 
 Symbol Data:
   - Imported from tests.fixtures.symbols
@@ -112,36 +110,6 @@ def mock_successful_response(mock_response_factory):
     return mock_response_factory(json_data={"data": {}})
 
 
-@pytest.fixture
-def mock_http_get(monkeypatch, mock_response_factory):
-    """Mock requests.get globally for all tests using this fixture.
-
-    Returns empty 200 response by default.
-    Can be overridden per test with @patch or by setting side_effect.
-    """
-
-    def _mock_get(*args, **kwargs):
-        return mock_response_factory(json_data={"data": []})
-
-    monkeypatch.setattr("requests.get", _mock_get)
-    return _mock_get
-
-
-@pytest.fixture
-def mock_http_post(monkeypatch, mock_response_factory):
-    """Mock requests.post globally for all tests using this fixture.
-
-    Returns empty 200 response by default.
-    Can be overridden per test with @patch or by setting side_effect.
-    """
-
-    def _mock_post(*args, **kwargs):
-        return mock_response_factory(json_data={"data": []})
-
-    monkeypatch.setattr("requests.post", _mock_post)
-    return _mock_post
-
-
 # ============================================================================
 # VCI-specific Mocking
 # ============================================================================
@@ -171,21 +139,6 @@ def mock_vci_send_request(monkeypatch):
         return {"data": {}}
 
     monkeypatch.setattr("vietstock.core.utils.client.send_request", _mock_send)
-
-
-# ============================================================================
-# TCBS-specific Mocking
-# ============================================================================
-
-
-@pytest.fixture
-def mock_tcbs_response(monkeypatch, mock_response_factory):
-    """Mock TCBS API responses."""
-
-    def _mock_get(*args, **kwargs):
-        return mock_response_factory(json_data={"data": []})
-
-    monkeypatch.setattr("requests.get", _mock_get)
 
 
 # ============================================================================

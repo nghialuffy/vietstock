@@ -16,7 +16,7 @@ import json
 import time
 from typing import Any
 
-import requests
+from curl_cffi import requests
 
 from vietstock.config import Config
 from vietstock.core.exceptions import CircuitOpenError
@@ -27,6 +27,8 @@ from vietstock.core.utils.logger import get_logger
 
 # Initialize logger for module
 logger = get_logger(__name__)
+
+_SESSION = requests.Session(impersonate="chrome")
 
 
 def send_request(
@@ -175,7 +177,7 @@ def _perform_request(
     """
     try:
         if method.upper() == "GET":
-            return requests.get(url, headers=headers, params=params, timeout=timeout)
+            return _SESSION.get(url, headers=headers, params=params, timeout=timeout)
 
         if payload is not None:
             if isinstance(payload, dict):
@@ -187,8 +189,8 @@ def _perform_request(
                 raise ValueError(msg)
         else:
             data_arg = None
-        return requests.post(url, headers=headers, data=data_arg, timeout=timeout)
-    except requests.exceptions.RequestException as e:
+        return _SESSION.post(url, headers=headers, data=data_arg, timeout=timeout)
+    except (requests.errors.RequestsError, requests.errors.CurlError) as e:
         error_msg = f"API request failed: {str(e)}"
         logger.error(error_msg)
         raise ConnectionError(error_msg) from e

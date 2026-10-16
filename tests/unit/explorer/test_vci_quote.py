@@ -57,7 +57,7 @@ class TestVCIQuote:
                 },
             )
 
-        monkeypatch.setattr("requests.post", mock_post)
+        monkeypatch.setattr("vietstock.core.utils.client._SESSION.post", mock_post)
 
         quote = Quote(symbol="ACB", random_agent=False, show_log=False)
         try:

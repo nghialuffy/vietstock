@@ -69,8 +69,8 @@ class TestQuoteAdapter:
                 },
             )
 
-        monkeypatch.setattr("requests.get", mock_get)
-        monkeypatch.setattr("requests.post", mock_get)
+        monkeypatch.setattr("vietstock.core.utils.client._SESSION.get", mock_get)
+        monkeypatch.setattr("vietstock.core.utils.client._SESSION.post", mock_get)
 
         quote = Quote(source="VCI", symbol="ACB", show_log=False)
         # This will likely fail without proper mocking
