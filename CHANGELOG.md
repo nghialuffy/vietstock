@@ -5,6 +5,17 @@ All notable changes to the `vietstock` project will be documented in this file.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+
+- Explorer TCBS: `Listing(source="tcbs").research_reports()` lấy báo cáo phân tích
+  (ngày công bố, loại báo cáo, mã, hashtag, link PDF), hỗ trợ phân trang, lấy toàn bộ
+  và lọc theo tiêu chí của trang.
+- Giao diện Hợp nhất: `Reference().reports.list()`.
+- Tiện ích lõi: `send_request_text()` cho endpoint trả về HTML thay vì JSON.
+- Bổ sung `DataSource.TCBS`, khôi phục khả năng import của `vietstock.core.constants`.
+
 ## [1.0.0]
 
 Bản phát hành đầu tiên.

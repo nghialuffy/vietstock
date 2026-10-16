@@ -13,6 +13,7 @@ if TYPE_CHECKING:
     from vietstock.ui.domains.reference.index import IndexReference
     from vietstock.ui.domains.reference.industry import IndustryReference
     from vietstock.ui.domains.reference.market import MarketReference
+    from vietstock.ui.domains.reference.reports import ReportsReference
     from vietstock.ui.domains.reference.search import SearchReference
     from vietstock.ui.domains.reference.warrant import WarrantReference
 
@@ -96,6 +97,13 @@ class Reference:
         from vietstock.ui.domains.reference.search import SearchReference
 
         return SearchReference()
+
+    @property
+    def reports(self) -> ReportsReference:
+        """Access research reports published by the data sources."""
+        from vietstock.ui.domains.reference.reports import ReportsReference
+
+        return ReportsReference()
 
     def warrant(self, symbol: str = None) -> WarrantReference:
         """Access covered warrant reference data."""

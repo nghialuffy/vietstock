@@ -6,7 +6,8 @@ sources. Requests are sent from the caller's own network connection; the
 library does not manage, rotate or supply network intermediaries.
 
 Functions:
-- send_request: send a request to a data source endpoint
+- send_request: send a request to a data source endpoint and return JSON
+- send_request_text: send a request and return the raw response body
 """
 
 from __future__ import annotations
@@ -54,6 +55,42 @@ def send_request(
 
     Raises:
         ConnectionError: If the request fails or returns an error code
+    """
+    return _send(url, headers, method, params, payload, show_log, timeout).json()
+
+
+def send_request_text(
+    url: str,
+    headers: dict[str, str],
+    method: str = "GET",
+    params: dict | None = None,
+    payload: dict | str | None = None,
+    show_log: bool = False,
+    timeout: int = 30,
+) -> str:
+    """
+    Same as send_request(), but return the response body as text.
+
+    Needed for endpoints that answer with a document instead of JSON, such as a
+    page embedding a token the caller must echo back in a later request.
+    """
+    return _send(url, headers, method, params, payload, show_log, timeout).text
+
+
+def _send(
+    url: str,
+    headers: dict[str, str],
+    method: str,
+    params: dict | None,
+    payload: dict | str | None,
+    show_log: bool,
+    timeout: int,
+) -> requests.Response:
+    """
+    Send a request and hand back the raw response.
+
+    Carries every check shared by send_request() and send_request_text():
+    environment guard, cooldown window, block detection and status check.
     """
     if url and isinstance(url, str) and "vietcap.com.vn" in url:
         if get_hosting_service() == "Google Colab":
@@ -120,7 +157,7 @@ def send_request(
     if response.status_code != 200:
         msg = f"Failed to fetch data: {response.status_code} - {response.reason}"
         raise ConnectionError(msg)
-    return response.json()
+    return response
 
 
 def _perform_request(

@@ -627,6 +627,17 @@ MAP = {
                 "Search for detailed asset information.",
             ),
         },
+        "reports": {
+            "list": (
+                "api",
+                "api.listing",
+                "Listing",
+                "research_reports",
+                "TCBS",
+                "DataFrame",
+                "TCBS research reports (report date + PDF link).",
+            ),
+        },
     },
     "Market": {
         "quote": (
