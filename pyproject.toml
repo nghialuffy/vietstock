@@ -29,6 +29,7 @@ classifiers = [
 ]
 dependencies = [
     "requests",
+    "curl-cffi",
     "beautifulsoup4",
     "pandas",
     "seaborn",

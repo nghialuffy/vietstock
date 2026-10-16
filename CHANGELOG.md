@@ -16,6 +16,14 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - Tiện ích lõi: `send_request_text()` cho endpoint trả về HTML thay vì JSON.
 - Bổ sung `DataSource.TCBS`, khôi phục khả năng import của `vietstock.core.constants`.
 
+### Changed
+
+- Tiện ích lõi: HTTP client chuyển sang `curl_cffi` với fingerprint Chrome
+  (`impersonate="chrome"`) thay cho `requests`, để vượt qua chặn Cloudflare theo
+  TLS/HTTP2 fingerprint. Thêm dependency `curl-cffi`.
+- Explorer VCI: handshake priceboard của `Finance` dùng chung session đó thay vì
+  `requests.Session()` riêng.
+
 ## [1.0.0]
 
 Bản phát hành đầu tiên.
