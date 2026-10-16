@@ -1,0 +1,82 @@
+[build-system]
+requires = ["setuptools>=42", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "vietstock"
+version = "1.0.0"
+description = "Client-side Python toolkit for Vietnamese market data: connect, standardize, analyze."
+readme = "README.md"
+# TODO(vietstock): điền authors, license và project.urls trước khi phát hành.
+requires-python = ">=3.10"
+keywords = ["vietstock", "finance", "vietnam", "stock market", "analysis", "API"]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Education",
+    "Intended Audience :: Financial and Insurance Industry",
+    "Topic :: Software Development :: Libraries",
+    "Topic :: Office/Business :: Financial :: Investment",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+    "Operating System :: OS Independent",
+    "Natural Language :: Vietnamese",
+    "Natural Language :: English",
+]
+dependencies = [
+    "requests",
+    "beautifulsoup4",
+    "pandas",
+    "seaborn",
+    "openpyxl",
+    "pydantic",
+    "psutil",
+    "packaging>=20.0",
+    "importlib-metadata>=1.0",
+    "tenacity",
+    "pytz",
+    "pre-commit[dev]>=4.6.2",
+    "pandas-stubs~=2.3.3",
+]
+
+[project.optional-dependencies]
+test = ["pytest>=7.0", "pytest-cov>=4.0", "pytest-timeout"]
+dev = ["pre-commit", "ruff", "pytest>=7.0", "pytest-cov>=4.0", "pytest-timeout"]
+
+[tool.setuptools]
+include-package-data = true
+[tool.setuptools.packages.find]
+exclude = ["build*", "dist*", "tests*", "notebooks*", "scripts*"]
+
+[tool.setuptools.package-data]
+vietstock = ["docs/*.txt", "docs/*.csv"]
+
+[tool.ruff]
+line-length = 88
+target-version = "py310"
+extend-exclude = ["*.ipynb", "dev-docs", "notebooks", "tests/archived"]
+
+[tool.ruff.lint]
+select = [
+    "E",  # pycodestyle errors
+    "W",  # pycodestyle warnings
+    "F",  # pyflakes
+    "I",  # isort
+    "B",  # flake8-bugbear
+    "C4", # flake8-comprehensions
+]
+ignore = [
+    "E501", # line too long, handled by ruff-format
+]
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+
+[tool.pytest.ini_options]
+norecursedirs = ["tests/archived"]
+addopts = "--ignore-glob='*tcbs*'"

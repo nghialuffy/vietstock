@@ -1,0 +1,147 @@
+"""
+vietstock.core.utils - Utility functions for data processing and validation.
+
+Public API exports for common utility operations.
+"""
+
+# Block detection and the per-host circuit breaker. Public on purpose:
+# vnstock_data builds on these, and an underscore-private name would put that
+# dependency one rename away from breaking.
+from __future__ import annotations
+
+from .block_detect import BlockSignal, detect_block, parse_retry_after
+from .circuit import circuit_check, circuit_key, circuit_status, circuit_trip, reset_circuit
+from .client import (
+    send_request,
+)
+from .compat import (
+    apply_to_dataframe,
+    get_pandas_info,
+    normalize_frequency_string,
+    replace_newlines_in_dataframe,
+    safe_resample_dataframe,
+    strip_whitespace_in_dataframe,
+)
+from .deprecation import (
+    DeprecationRegistry,
+    deprecate_provider,
+    deprecated,
+    get_deprecation_info,
+    list_deprecated_features,
+    warn_deprecated,
+)
+from .env import get_cwd, get_hosting_service, get_package_path, get_path_delimiter, get_platform, get_username
+from .logger import advanced_logger, get_logger
+from .parser import (
+    camel_to_snake,
+    flatten_data,
+    get_asset_type,
+    last_n_days,
+    localize_timestamp,
+    parse_timestamp,
+    vn30_abbrev_contract,
+    vn30_expand_contract,
+)
+from .retry import NEVER_RETRY, TRANSIENT, api_retry, network_retry, should_retry
+from .transform import (
+    clean_html_dict,
+    clean_numeric_string,
+    drop_cols_by_pattern,
+    flatten_dict_to_df,
+    flatten_hierarchical_index,
+    flatten_list_to_df,
+    get_trading_date,
+    intraday_to_df,
+    ohlc_to_df,
+    reorder_cols,
+    replace_in_column_names,
+)
+from .validation import (
+    convert_to_timestamps,
+    validate_date_range,
+    validate_interval,
+    validate_model_input,
+    validate_pagination,
+    validate_symbol,
+)
+
+# Client utilities
+# Pandas compatibility utilities
+# Deprecation utilities
+# Environment utilities
+# Logging
+# Parser utilities
+# Retry policy
+# Transform utilities
+
+__all__ = [
+    # Validation
+    "validate_symbol",
+    "validate_date_range",
+    "convert_to_timestamps",
+    "validate_interval",
+    "validate_pagination",
+    "validate_model_input",
+    # Parser
+    "parse_timestamp",
+    "localize_timestamp",
+    "get_asset_type",
+    "camel_to_snake",
+    "flatten_data",
+    "last_n_days",
+    "vn30_expand_contract",
+    "vn30_abbrev_contract",
+    # Transform
+    "clean_numeric_string",
+    "get_trading_date",
+    "ohlc_to_df",
+    "intraday_to_df",
+    "replace_in_column_names",
+    "flatten_hierarchical_index",
+    "flatten_dict_to_df",
+    "flatten_list_to_df",
+    "clean_html_dict",
+    "reorder_cols",
+    "drop_cols_by_pattern",
+    # Logging
+    "get_logger",
+    "advanced_logger",
+    # Client
+    "send_request",
+    # Block detection / circuit breaker
+    "BlockSignal",
+    "detect_block",
+    "parse_retry_after",
+    "circuit_check",
+    "circuit_key",
+    "circuit_trip",
+    "circuit_status",
+    "reset_circuit",
+    # Retry policy
+    "api_retry",
+    "network_retry",
+    "should_retry",
+    "NEVER_RETRY",
+    "TRANSIENT",
+    # Environment
+    "get_platform",
+    "get_hosting_service",
+    "get_package_path",
+    "get_username",
+    "get_cwd",
+    "get_path_delimiter",
+    # Deprecation
+    "deprecated",
+    "deprecate_provider",
+    "warn_deprecated",
+    "get_deprecation_info",
+    "list_deprecated_features",
+    "DeprecationRegistry",
+    # Pandas compatibility
+    "apply_to_dataframe",
+    "replace_newlines_in_dataframe",
+    "strip_whitespace_in_dataframe",
+    "get_pandas_info",
+    "normalize_frequency_string",
+    "safe_resample_dataframe",
+]
