@@ -10,33 +10,30 @@ The vietstock project uses GitHub Actions to automatically test, validate, and r
 
 ### 1. Main Test Suite (`test.yml`)
 
-**Trigger**: Push to main/develop, PR to main/develop, Daily schedule (2 AM UTC)
+**Trigger**: Push to main/develop, PR to main/develop, Daily schedule (2 AM UTC), manual dispatch
 
 **What it does**:
-- Runs comprehensive test suite across multiple platforms and Python versions
-- Tests on: Ubuntu, macOS, Windows
-- Python versions: 3.10, 3.11, 3.12, 3.13
-- Generates coverage reports
-- Uploads results to Codecov
+- Runs the offline test suite as a blocking gate
+- Tests on: Ubuntu (Python 3.10–3.13), plus Windows and macOS on Python 3.12
+- Runs live-endpoint tests in a separate, non-blocking job (skipped on PRs)
+- Builds and validates the distribution package
 
 **Key Jobs**:
-- `test`: Unit and integration tests with coverage
-- `code-quality`: Linting, formatting, type checking
-- `security`: Security scanning with Bandit and Safety
+- `unit`: `tests/unified_ui` + `tests/unit` with `-m "not integration"` (blocking)
+- `integration`: `tests/integration` + integration-marked unit tests, `continue-on-error: true` (scheduled/push only)
 - `build`: Package building and validation
-- `test-report`: Test result reporting
 
 **Artifacts**:
-- Coverage reports (HTML, XML)
-- JUnit test results
 - Distribution packages
+
+Coverage is owned by `coverage-report.yml` (below), not this workflow.
 
 ### 2. Coverage Report (`coverage-report.yml`)
 
 **Trigger**: Push to main/develop, PR to main/develop
 
 **What it does**:
-- Generates detailed coverage reports
+- Runs `tests/unified_ui` + `tests/unit` with `-m "not integration"` under coverage
 - Uploads to Codecov for tracking
 - Comments on PRs with coverage changes
 - Sets coverage thresholds (Green: 80%, Orange: 60%)
@@ -94,7 +91,9 @@ The vietstock project uses GitHub Actions to automatically test, validate, and r
 ### Test Categories
 
 - **Unit Tests**: Fast, isolated tests (~500+ tests)
-- **Integration Tests**: Tests with external services
+- **Integration Tests**: Tests with external services. Any test that reaches the
+  network must carry `@pytest.mark.integration`; CI runs only non-integration
+  tests in its blocking job.
 - **Smoke Tests**: Basic functionality checks
 - **Regression Tests**: Tests for fixed bugs
 
@@ -106,7 +105,10 @@ The vietstock project uses GitHub Actions to automatically test, validate, and r
 # Install test dependencies
 pip install -e ".[test]"
 
-# Run all tests
+# Run the offline suite used by CI
+pytest tests/unified_ui tests/unit -m "not integration"
+
+# Run everything, including live-endpoint tests
 pytest tests/
 
 # Run with coverage
