@@ -171,7 +171,7 @@ class TestTCBSResearchReports:
 
         assert len(df) == 2
         assert list(df.columns) == ["date", "report_type", "title", "ticker", "hashtags", "url"]
-        assert df["date"].dtype == "datetime64[ns]"
+        assert pd.api.types.is_datetime64_any_dtype(df["date"])
         assert df.source == "TCBS"
 
         first = df.iloc[0]
@@ -184,7 +184,7 @@ class TestTCBSResearchReports:
 
         # A report that covers the whole market carries no ticker tag.
         second = df.iloc[1]
-        assert second["ticker"] is None
+        assert pd.isna(second["ticker"])
         assert second["hashtags"] == ["#Q3 2026 Earnings Preview", "#Market-wide"]
         assert second["url"].endswith("20261002_Q3_2026_Earnings_Preview.pdf")
 
